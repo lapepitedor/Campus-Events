@@ -1,0 +1,50 @@
+﻿@* @model IEnumerable<Event> *@
+@model Campus_Events.Models.PagedResult<Event>
+
+
+@{
+    ViewData["Title"] = "Tableau de bord - Événements";
+}
+<h2>Tableau de bord des événements</h2>
+<a asp-action="New" class="btn btn-primary">Créer un nouvel événement</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Nom de l'événement</th>
+            <th>Type</th>
+            <th>Date et Heure</th>
+            <th>Lieu</th>
+            <th>Description</th>
+            <th>Statut</th>
+            <th>Places Dispo</th>
+            <th>Inscrits</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int index = 1;
+        }
+        @foreach (var obj in Model.Items)
+        {
+            <tr>
+                <th scope="row">@index</th>
+                <td>@obj.Title</td>
+                <td>@obj.Type</td>
+                <td>@obj.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@obj.Location</td>
+                <td>@obj.Description</td>
+                <td>@(obj.IsActive ? "Actif" : "Inactif")</td>
+                <td>@obj.TotalSeats</td>
+                <td>@obj.RegisteredSeats</td>
+                <td>
+                    <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@obj.ID" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@obj.ID" class="btn btn-danger">Löschen</a>
+                </td>
+
+            </tr>
+            index++;
+        }
+    </tbody>
+</table>

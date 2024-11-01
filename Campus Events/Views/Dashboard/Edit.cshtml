@@ -1,0 +1,52 @@
+﻿@model Campus_Events.Models.Event
+
+<h2>@(Model.ID == Guid.Empty ? "Créer un nouvel événement" : "Modifier l'événement")</h2>
+
+<form asp-action="Save" method="post">
+    <input type="hidden" name="ID" value="@Model.ID">
+    <div class="form-group">
+        <label>Titre</label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Type</label>
+        <select asp-for="Type" asp-items="@(new SelectList(Enum.GetValues(typeof(Campus_Events.Models.EventType))))" class="form-control">
+        </select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Date et heure</label>
+        <input asp-for="Date" type="datetime-local" class="form-control" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Lieu</label>
+        <input asp-for="Location" class="form-control" />
+        <span asp-validation-for="Location" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Description</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Status</label>
+        <select asp-for="IsActive" class="form-control">
+            <option value="true">Actif</option>
+            <option value="false">Inactif</option>
+        </select>
+        <span asp-validation-for="IsActive" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Max Participant</label>
+        <input asp-for="TotalSeats" class="form-control" />
+        <span asp-validation-for="TotalSeats" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Place Dispo</label>
+        <input asp-for="AvailableSeats" class="form-control" />
+        <span asp-validation-for="AvailableSeats" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+</form>
