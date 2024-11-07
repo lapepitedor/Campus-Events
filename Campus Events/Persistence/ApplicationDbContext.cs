@@ -1,5 +1,6 @@
 ﻿using Campus_Events.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Campus_Events.Persistence
 {
@@ -20,6 +21,19 @@ namespace Campus_Events.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(DateTime))
+                    {
+                        property.SetValueConverter(new DateTimeToUtcConverter());
+                    }
+                }
+            }
+
+
+
             // Configuration de la clé composite pour UserEvent
             modelBuilder.Entity<UserEvent>()
                 .HasKey(ue => new { ue.UserId, ue.EventId });
@@ -34,8 +48,7 @@ namespace Campus_Events.Persistence
                 .HasOne(ue => ue.Event)
                 .WithMany(e => e.UserEvents)
                 .HasForeignKey(ue => ue.EventId);
-
-            
+           
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -53,6 +66,16 @@ namespace Campus_Events.Persistence
         {
             if (Database.GetPendingMigrations().Any())
                 Database.Migrate();
+        }
+
+        // Convertisseur de DateTime vers UTC
+        public class DateTimeToUtcConverter : ValueConverter<DateTime, DateTime>
+        {
+            public DateTimeToUtcConverter() : base(
+                v => v.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(v, DateTimeKind.Utc) : v.ToUniversalTime(),
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc))
+            {
+            }
         }
     }
 

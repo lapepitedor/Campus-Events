@@ -6,33 +6,35 @@ namespace Campus_Events.Repositories
 {
     public class UserEventsEfCoreRepository : IUserRegistration
     {
-        private readonly ApplicationDbContext context;
-        public UserEventsEfCoreRepository(ApplicationDbContext context) 
+        private readonly ApplicationDbContext _context;
+
+        public UserEventsEfCoreRepository(ApplicationDbContext context)
         {
-            this.context = context;
-            context.Migrate();
-        } 
+            _context = context;
+        }
+
         public bool IsUserRegistered(Guid eventId, Guid userId)
         {
-            return context.UserEvents.Any(ue => ue.EventId == eventId && ue.UserId == userId);
+            return _context.UserEvents.Any(ue => ue.EventId == eventId && ue.UserId == userId);
         }
 
         public bool RegisterUserToEvent(Guid eventId, Guid userId)
         {
-            var eventItem = context.Events.Find(eventId);
-            var user = context.Users.Find(userId);
+            var eventItem = _context.Events
+                .Include(e => e.UserEvents)
+                .FirstOrDefault(e => e.ID == eventId);
+
+            var user = _context.Users.Find(userId);
 
             if (eventItem == null || user == null || eventItem.AvailableSeats <= 0)
             {
-                return false; // Soit l'événement, soit l'utilisateur n'existe pas, soit plus de places disponibles
+                return false; // Événement inexistant ou utilisateur inexistant ou plus de places disponibles
             }
 
-            // Vérifie si l'utilisateur est déjà inscrit
-            bool isAlreadyRegistered = context.UserEvents.Any(ue => ue.EventId == eventId && ue.UserId == userId);
-
-            if (isAlreadyRegistered)
+            // Vérifiez si l'utilisateur est déjà inscrit
+            if (IsUserRegistered(eventId, userId))
             {
-                return false; // L'utilisateur est déjà inscrit
+                return false; // L'utilisateur est déjà inscrit à cet événement
             }
 
             // Crée une nouvelle inscription
@@ -43,27 +45,51 @@ namespace Campus_Events.Repositories
                 RegistrationDate = DateTime.Now
             };
 
-            context.UserEvents.Add(userEvent);
-            context.SaveChanges(); // Persiste les modifications
+            _context.UserEvents.Add(userEvent);
+            eventItem.RegisteredSeatsCount++;
+
+            try
+            {
+                _context.SaveChanges(); // Enregistre les modifications dans la base de données
+            }
+            catch (DbUpdateException ex)
+            {
+                // Gérer les exceptions de mise à jour de base de données
+                return false; // En cas d'erreur, retourner false
+            }
 
             return true; // Inscription réussie
         }
 
+
         public bool UnregisterUserFromEvent(Guid eventId, Guid userId)
         {
-            // Trouve l'inscription
-            var registration = context.UserEvents
+            var registration = _context.UserEvents
                 .FirstOrDefault(ue => ue.EventId == eventId && ue.UserId == userId);
 
             if (registration == null)
             {
-                return false; // L'utilisateur n'est pas inscrit à cet événement
+                return false;
             }
 
-            context.UserEvents.Remove(registration);
-            context.SaveChanges(); // Persiste la désinscription
+            _context.UserEvents.Remove(registration);
+            var eventItem = _context.Events.Find(eventId);
+            if (eventItem != null)
+            {
+                eventItem.RegisteredSeatsCount--;
+            }
 
-            return true; // Désinscription réussie
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                // Handle database exceptions appropriately
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -2,49 +2,81 @@
 @model Campus_Events.Models.PagedResult<Event>
 
 
-@{
-    ViewData["Title"] = "Tableau de bord - Événements";
-}
-<h2>Tableau de bord des événements</h2>
-<a asp-action="New" class="btn btn-primary">Créer un nouvel événement</a>
-<table class="table">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Nom de l'événement</th>
-            <th>Type</th>
-            <th>Date et Heure</th>
-            <th>Lieu</th>
-            <th>Description</th>
-            <th>Statut</th>
-            <th>Places Dispo</th>
-            <th>Inscrits</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @{
-            int index = 1;
-        }
-        @foreach (var obj in Model.Items)
-        {
-            <tr>
-                <th scope="row">@index</th>
-                <td>@obj.Title</td>
-                <td>@obj.Type</td>
-                <td>@obj.Date.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>@obj.Location</td>
-                <td>@obj.Description</td>
-                <td>@(obj.IsActive ? "Actif" : "Inactif")</td>
-                <td>@obj.TotalSeats</td>
-                <td>@obj.RegisteredSeats</td>
-                <td>
-                    <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@obj.ID" class="btn btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@obj.ID" class="btn btn-danger">Löschen</a>
-                </td>
+<!-- Menu de Navigation -->
 
+<nav class="navbar navbar-expand-lg navbar-light bg-success">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="@Url.Action("AdminDashboard", "Dashboard")">Campus Events Manager</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" asp-action="AdminDashboard" asp-controller="Dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="New" asp-controller="Dashboard">Créer un événement</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Logout" asp-controller="Account">
+                        <span class="glyphicon glyphicon-log-in"></span> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+<!-- Contenu de la Page -->
+<div class="container">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+  @*   <a asp-action="New" class="btn btn-primary mb-3">Créer un nouvel événement</a> *@
+
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Date and Time</th>
+                <th>Location</th>
+                <th>Description</th>
+                <th>Statut</th>
+                <th>Max Participant</th>
+                <th>Registered</th>
+                <th>Actions</th>
             </tr>
-            index++;
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @{
+                int index = 1;
+            }
+            @foreach (var obj in Model.Items)
+            {
+                <tr>
+                    <th scope="row">@index</th>
+                    <td>@obj.Title</td>
+                    <td>@obj.Type</td>
+                    <td>@obj.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@obj.Location</td>
+                    <td>@obj.Description</td>
+                    <td>@(obj.IsActive ? "Actif" : "Inactif")</td>
+                    <td>@obj.TotalSeats</td>
+                    <td>@obj.RegisteredSeatsCount</td>
+                    <td>
+                        <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@obj.ID" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@obj.ID" class="btn btn-danger btn-sm">Supprimer</a>
+                    </td>
+                </tr>
+                index++;
+            }
+        </tbody>
+    </table>
+</div>

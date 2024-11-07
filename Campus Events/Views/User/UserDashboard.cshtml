@@ -1,17 +1,27 @@
 ﻿@model PagedResult<Campus_Events.Models.Event>
 
-<div class="container">
+<div class="container ">
     <!-- Menu de navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Tableau de Bord</a>
-            <div class="collapse navbar-collapse">
+            <a class="navbar-brand" href="#">Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" asp-action="UserDashboard">Événements Disponibles</a>
+                        <a class="nav-link" asp-action="UserDashboard">Events Available</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-action="RegisteredEvents" asp-route-userId="@User.Identity.Name">Événements Inscrits</a>
+                        <a class="nav-link" asp-action="RegisteredEvents" asp-route-userId="@User.Claims.FirstOrDefault(x=> x.Type == "ID").Value">List of registered events</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Logout" asp-controller="Account">
+                            <span class="glyphicon glyphicon-log-in"></span> Logout
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -20,6 +30,15 @@
 
     <!-- Titre de la section -->
     <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+    <div class="container mt-4">
+    <!-- Vérification et affichage du message d'inscription -->
+    @if (TempData["Message"] != null)
+    {
+        <div id="tempMessage" class="alert alert-info mt-3">
+            @TempData["Message"]
+        </div>
+    }
 
     <!-- Affichage des événements -->
     <div class="row">
@@ -40,7 +59,7 @@
                         </p>
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="text-muted">
-                                <i class="fas fa-users"></i> @obj.RegisteredSeats / @obj.TotalSeats
+                                <i class="fas fa-users"></i> @obj.RegisteredSeatsCount / @obj.TotalSeats
                             </span>
                             <a asp-action="EventDetails" asp-route-id="@obj.ID" class="btn btn-primary btn-sm">
                                 Détails <i class="fas fa-arrow-right"></i>
@@ -52,3 +71,14 @@
         }
     </div>
 </div>
+</div>
+
+ <script>
+    // Masque le message après 5 secondes (5000 millisecondes)
+    setTimeout(function () {
+        var messageElement = document.getElementById("tempMessage");
+        if (messageElement) {
+            messageElement.style.display = "none";
+        }
+    }, 2000); // 5000 ms = 5 secondes
+</script>           

@@ -1,10 +1,12 @@
 ﻿using Campus_Events.Models;
 using Campus_Events.Persistence;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Campus_Events.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class DashboardController : Controller
     {
         private readonly ILogger<DashboardController> logger;

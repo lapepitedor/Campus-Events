@@ -12,6 +12,22 @@ namespace Campus_Events.Persistence
         {
             this.passwordHelper = passwordHelper;
             Add(new User() { EMail = "alexander.stuckenholz@hshl.de", PasswordHash = passwordHelper.ComputeSha256Hash("secret123123") });
+
+            // Ajout d'un utilisateur administrateur
+            Add(new User()
+            {
+                EMail = "admin@yahoo.com",
+                PasswordHash = passwordHelper.ComputeSha256Hash("adminpassword"),
+               // IsAdmin = true // Définit cet utilisateur comme administrateur
+            });
+
+            // Ajout d'un utilisateur administrateur
+            Add(new User()
+            {
+                EMail = "admin@gmail.com",
+                PasswordHash = passwordHelper.ComputeSha256Hash("adminpassword"),
+                // IsAdmin = true // Définit cet utilisateur comme administrateur
+            });
         }
 
         public IEnumerable<User> GetAll()
@@ -56,21 +72,6 @@ namespace Campus_Events.Persistence
 
         public User  FindByLogin(string email, string password)
         {
-            // Vérifiez si l'utilisateur correspond à un administrateur fixe
-            var admin = AdminConfig.Admins.FirstOrDefault(a => a.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
-            if (admin != default)
-            {
-                return new User
-                {
-                    EMail = admin.Email,
-                    Firstname = "Admin",
-                    Lastname = "User",
-                    //IsAdmin = true,
-                    MailAddressConfirmed = true
-                };
-            }
-
-            // Si ce n'est pas un administrateur fixe, vérifiez parmi les utilisateurs enregistrés
             var user = FindByEmail(email);
             if (user is null)
                 return null;

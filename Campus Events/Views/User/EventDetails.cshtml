@@ -15,11 +15,12 @@
                 </span>
             </p>
             <p><strong>Places disponibles :</strong> @Model.AvailableSeats</p>
-            <p><strong>Inscrits :</strong> @Model.RegisteredSeats</p>
+            <p><strong>Inscrits :</strong> @Model.RegisteredSeatsCount</p>
 
             <div class="mt-4">
                 <form asp-action="Register" method="post" class="d-inline">
                     <input type="hidden" name="eventId" value="@Model.ID" />
+                    <input type="hidden" name="userId" value="@User.Claims.FirstOrDefault(x=> x.Type == "ID").Value" />
                     <button type="submit" class="btn btn-success me-2">
                         S'inscrire <i class="fas fa-check-circle"></i>
                     </button>
@@ -27,28 +28,14 @@
 
                 <form asp-action="Unregister" method="post" class="d-inline">
                     <input type="hidden" name="eventId" value="@Model.ID" />
+                    <input type="hidden" name="userId" value="@User.Claims.FirstOrDefault(x=> x.Type == "ID").Value" />
                     <button type="submit" class="btn btn-danger">
                         Se désinscrire <i class="fas fa-times-circle"></i>
                     </button>
                 </form>
             </div>
 
-            @if (TempData["Message"] != null)
-            {
-                <div id="tempMessage" class="alert alert-info mt-3">
-                    @TempData["Message"]
-                </div>
-            } 
         </div>
     </div>
 </div>
 
-<script>
-    // Masque le message après 5 secondes (5000 millisecondes)
-    setTimeout(function () {
-        var messageElement = document.getElementById("tempMessage");
-        if (messageElement) {
-            messageElement.style.display = "none";
-        }
-    }, 5000); // 5000 ms = 5 secondes
-</script>

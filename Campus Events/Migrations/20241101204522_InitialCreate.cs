@@ -23,7 +23,8 @@ namespace Campus_Events.Migrations
                     type = table.Column<int>(type: "integer", nullable: false),
                     organizer = table.Column<string>(type: "text", nullable: true),
                     totalseats = table.Column<int>(type: "integer", nullable: false),
-                    isactive = table.Column<bool>(type: "boolean", nullable: false)
+                    isactive = table.Column<bool>(type: "boolean", nullable: false),
+                    registeredseatscount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -38,6 +39,7 @@ namespace Campus_Events.Migrations
                     firstname = table.Column<string>(type: "text", nullable: true),
                     lastname = table.Column<string>(type: "text", nullable: true),
                     email = table.Column<string>(type: "text", nullable: true),
+                    isadmin = table.Column<bool>(type: "boolean", nullable: true),
                     passwordhash = table.Column<string>(type: "text", nullable: true),
                     mailaddressconfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     passwordresettoken = table.Column<string>(type: "text", nullable: true)

@@ -25,7 +25,7 @@ namespace Campus_Events.Repositories
                     Lastname = "Stuckenholz",
                     EMail = "alexander.stuckenholz@hshl.de",
                     PasswordHash = passwordHelper.ComputeSha256Hash("secret"),
-                    
+                    IsAdmin = true
                 };
 
                 context.Users.Add(user);
@@ -87,11 +87,27 @@ namespace Campus_Events.Repositories
                .FirstOrDefault(p => p.ID == id);
         }
 
+        //public User Update(User entity)
+        //{
+        //    context.Users.Update(entity);
+        //    context.SaveChanges();
+        //    return entity;
+        //}
         public User Update(User entity)
         {
-            context.Users.Update(entity);
-            context.SaveChanges();
-            return entity;
+            // Si l'entité est déjà suivie par le contexte, pas besoin de l'ajouter à nouveau
+            var existingUser = context.Users.Find(entity.ID); // Récupère l'utilisateur existant
+            if (existingUser != null)
+            {
+                // Mettez à jour les propriétés nécessaires
+                existingUser.PasswordResetToken = entity.PasswordResetToken; // Exemples de propriétés à mettre à jour
+                                                                             // Mettez à jour d'autres propriétés si nécessaire
+
+                context.SaveChanges(); // Enregistrez les modifications
+            }
+
+            return existingUser; // Retourne l'utilisateur existant
         }
+
     }
 }

@@ -16,9 +16,9 @@ namespace Campus_Events
             services.Configure<MailSettings>(options => config.GetSection("MailSettings").Bind(options));
             services.Configure<DatabaseSettings>(options => config.GetSection("DatabaseSettings").Bind(options));
             services.Configure<GeneralSettings>(options => config.GetSection("GeneralSettings").Bind(options));
-            services.AddSingleton<IUserRepository, UserMemoryRepository>();
-            services.AddSingleton<IEventRepository, EventMemoryRepository>();
-            services.AddSingleton<IUserRegistration, UserRegistration>();
+           // services.AddSingleton<IUserRepository, UserMemoryRepository>();
+          //  services.AddSingleton<IEventRepository, EventMemoryRepository>();
+           // services.AddSingleton<IUserRegistration, UserRegistration>();
 
             services.AddSingleton<DbConnectionFactory>();
             services.AddSingleton<PasswordHelper>();
@@ -44,8 +44,8 @@ namespace Campus_Events
             })
             .AddCookie(options =>
             {
-                options.LoginPath = "/Account/Login";
-                options.AccessDeniedPath = "/Account/Login";
+                options.LoginPath = "/Authentication/Login";
+                options.AccessDeniedPath = "/Authentication/Login";
             });
         }
 
@@ -73,14 +73,14 @@ namespace Campus_Events
                 // Redirection de la racine vers la page de connexion
                 endpoints.MapGet("/", async context =>
                 {
-                    context.Response.Redirect("/Account/Login");
+                    context.Response.Redirect("/Authentication/Login");
                 });
 
                 // Mappez les contrôleurs
                 // Route par défaut pour contrôler l'accès aux contrôleurs et aux actions
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Account}/{action=Login}/{id?}");
+                    pattern: "{controller=Authentication}/{action=Login}/{id?}");
             });
         }
     }

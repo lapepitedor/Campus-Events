@@ -4,6 +4,6 @@
     {
         bool RegisterUserToEvent(Guid eventId, Guid userId);
         bool UnregisterUserFromEvent(Guid eventId, Guid userId);
-        bool IsUserRegistered(Guid eventId, Guid userId); // Vérifie si un utilisateur est déjà inscrit
+        bool IsUserRegistered(Guid eventId, Guid userId); 
     }
 }

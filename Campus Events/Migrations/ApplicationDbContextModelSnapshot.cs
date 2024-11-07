@@ -49,6 +49,10 @@ namespace Campus_Events.Migrations
                         .HasColumnType("text")
                         .HasColumnName("organizer");
 
+                    b.Property<int>("RegisteredSeatsCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("registeredseatscount");
+
                     b.Property<string>("Title")
                         .HasColumnType("text")
                         .HasColumnName("title");
@@ -81,6 +85,10 @@ namespace Campus_Events.Migrations
                     b.Property<string>("Firstname")
                         .HasColumnType("text")
                         .HasColumnName("firstname");
+
+                    b.Property<bool?>("IsAdmin")
+                        .HasColumnType("boolean")
+                        .HasColumnName("isadmin");
 
                     b.Property<string>("Lastname")
                         .HasColumnType("text")

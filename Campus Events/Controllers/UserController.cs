@@ -30,9 +30,9 @@ namespace Campus_Events.Controllers
         public IActionResult RegisteredEvents(Guid userId)
         {
             var registeredEvents = eventRepository.GetEventsForUser(userId); // Récupère les événements inscrits pour cet utilisateur
-            return View("UserDashboard", new PagedResult<Event> { Items = registeredEvents.ToList() }); // Utilise la vue UserDashboard pour affichage
+                                                                             // return View("UserDashboard", new PagedResult<Event> { Items = registeredEvents.ToList() }); // Utilise la vue UserDashboard pour affichage
+            return View("RegisteredEvents", new PagedResult<Event> { Items = registeredEvents.ToList() });
         }
-
 
         // Action pour afficher les détails d'un événement
         [HttpGet("/User/EventDetails/{id}")]
@@ -42,7 +42,6 @@ namespace Campus_Events.Controllers
             return View(eventItem);
         }
 
-        // Action pour s'inscrire à un événement
         [HttpPost]
         public IActionResult Register(Guid eventId, Guid userId)
         {
@@ -54,7 +53,7 @@ namespace Campus_Events.Controllers
             return RedirectToAction("UserDashboard");
         }
 
-        // Action pour se désinscrire d'un événement
+   
         [HttpPost]
         public IActionResult Unregister(Guid eventId, Guid userId)
         {
@@ -64,6 +63,8 @@ namespace Campus_Events.Controllers
             //return RedirectToAction("EventDetails", new { id = eventId });
             return RedirectToAction("UserDashboard");
         }
+
+       
 
     }
 }

@@ -39,7 +39,10 @@ namespace Campus_Events.Misc
             {
                 using (var client = new SmtpClient())
                 {
+                    client.ServerCertificateValidationCallback = (s, c, h, e) => true; // Ignorer la validation du certificat
+
                     client.Connect(settings.Host, settings.Port, SecureSocketOptions.Auto, stoppingToken);
+                    //client.Connect(settings.Host, int.Parse(settings.Port), SecureSocketOptions.StartTls, stoppingToken);
                     client.Authenticate(settings.Username, settings.Password);
                     client.Send(message);
                     client.Disconnect(true);

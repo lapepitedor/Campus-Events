@@ -1,0 +1,95 @@
+﻿@model PagedResult<Campus_Events.Models.Event>
+
+<div class="container">
+    <!-- Menu de navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="UserDashboard">Events Available</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="RegisteredEvents" asp-route-userId="@User.Claims.FirstOrDefault(x => x.Type == "ID").Value">List of registered events</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Logout" asp-controller="Account">
+                            <span class="glyphicon glyphicon-log-in"></span> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Titre de la section -->
+    <h2 class="text-center mb-4">My Registered Events</h2>
+
+    <div class="container mt-4">
+        <!-- Vérification et affichage du message d'inscription -->
+        @if (TempData["Message"] != null)
+        {
+            <div id="tempMessage" class="alert alert-info mt-3">
+                @TempData["Message"]
+            </div>
+        }
+
+        <!-- Affichage des événements dans un tableau -->
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Organizer</th>
+                    <th>Titre</th>
+                    <th>Location</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.Items.OrderBy(e => e.Date))
+                {
+                    <tr>
+                        <td>@obj.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@obj.Type</td>
+                        <td>@obj.Organizer</td>
+                        <td>@obj.Title</td>
+                        <td>@obj.Location</td>
+                        <td>@obj.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Pagination, si nécessaire -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(Model.CurrentPage == i ? "active" : "")">
+                            <a class="page-link" asp-action="RegisteredEvents" asp-route-userId="@User.Claims.FirstOrDefault(x => x.Type == "ID").Value" asp-route-pageNumber="@i">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </div>
+</div>
+
+<script>
+    // Masque le message après 5 secondes (5000 millisecondes)
+    setTimeout(function () {
+        var messageElement = document.getElementById("tempMessage");
+        if (messageElement) {
+            messageElement.style.display = "none";
+        }
+    }, 5000); // 5000 ms = 5 secondes
+</script>

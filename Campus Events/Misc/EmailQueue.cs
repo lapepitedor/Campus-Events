@@ -15,7 +15,7 @@ namespace Campus_Events.Misc
 
         public void Enqueue(MimeMessage message)
         {
-            message.From.Add(new MailboxAddress("ToDo", settings.FromMailAddress));
+            message.From.Add(new MailboxAddress("CampusEvents", settings.FromMailAddress));
             messages.Enqueue(message);
         }
 

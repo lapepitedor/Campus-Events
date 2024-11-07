@@ -57,10 +57,12 @@ namespace Campus_Events.Repositories
 
         public IEnumerable<Event> GetEventsForUser(Guid userId)
         {
-            return context.UserEvents
+            var ret = context.UserEvents
                  .Where(ue => ue.UserId == userId)
                  .Select(ue => ue.Event)
                  .ToList();
+
+            return ret;
         }
 
         public Event GetSingle(Guid id)

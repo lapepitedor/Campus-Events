@@ -9,14 +9,14 @@ using Campus_Events.Models;
 
 namespace Campus_Events.Controllers
 {
-    public class AccountController : Controller
+    public class AuthenticationController : Controller
     {
-        private ILogger<AccountController> logger;
+        private ILogger<AuthenticationController> logger;
         private IUserRepository userRepository;
         private EmailService mailService;
         private PasswordHelper passwordHelper;
 
-        public AccountController(ILogger<AccountController> logger, IUserRepository userRepository, EmailService mailService, PasswordHelper passwordHelper)
+        public AuthenticationController(ILogger<AuthenticationController> logger, IUserRepository userRepository, EmailService mailService, PasswordHelper passwordHelper)
         {
             this.logger = logger;
             this.userRepository = userRepository;
@@ -24,13 +24,13 @@ namespace Campus_Events.Controllers
             this.passwordHelper = passwordHelper;
         }
 
-        [HttpGet("/Account/Login/")]
+        [HttpGet("/Authentication/Login/")]
         public IActionResult Login()
         {
             return View();
         }
 
-        [HttpPost("/Account/Authenticate/")]
+        [HttpPost("/Authentication/Authenticate/")]
         public async Task<IActionResult> Authenticate([FromForm] LoginViewModel login)
         {
             if (!ModelState.IsValid)
@@ -38,21 +38,21 @@ namespace Campus_Events.Controllers
 
             if (string.IsNullOrEmpty(login.EMail))
             {
-                ModelState.AddModelError(string.Empty, "L'email est requis.");
+                ModelState.AddModelError(string.Empty, "Email is required.");
                 return View("Login", login);
             }
 
             // Vérifiez si login.Password n'est pas nul ou vide
             if (string.IsNullOrEmpty(login.Password))
             {
-                ModelState.AddModelError(string.Empty, "Le mot de passe est requis.");
+                ModelState.AddModelError(string.Empty, "The password is required.");
                 return View("Login", login);
             }
 
             var user = userRepository.FindByLogin(login.EMail, login.Password);
             if (user is null)
             {
-                ModelState.AddModelError(string.Empty, "Email ou mot de passe incorrect."); // Message d'erreur pour l'utilisateur
+                ModelState.AddModelError(string.Empty, "Incorrect email address or password."); 
                 return View("Login", user);
             }
 
@@ -60,41 +60,35 @@ namespace Campus_Events.Controllers
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-            // Vérifiez si l'utilisateur est un administrateur
-            if (AdminConfig.Admins.Any(admin => admin.Email.Equals(login.EMail, StringComparison.OrdinalIgnoreCase)))
-            {               
+            if (user.IsAdmin == true) 
+            {
                 return RedirectToAction("AdminDashboard", "Dashboard");
-               // return RedirectToAction("ListEvent", "UserDashboard");
-            
             }
             else
             {
-                // Rediriger vers le tableau de bord de l'utilisateur
                 return RedirectToAction("UserDashboard", "User");
-               
             }
         }
 
-        [HttpGet("/Account/Logout/")]
+        [HttpGet("/Authentication/Logout/")]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Redirect("/Account/Login");
+            return Redirect("/Authentication/Login");
         }
 
-        [HttpGet("/Account/PasswordForgotten/")]
+        [HttpGet("/Authentication/PasswordForgotten/")]
         public IActionResult PasswordForgotten()
         {
             return View();
         }
 
-        [HttpPost("/Account/SendPasswordResetMail/")]
+        [HttpPost("/Authentication/SendPasswordResetMail/")]
         public IActionResult SendPasswordResetMail([FromForm] PasswordForgottenViewModel pf)
         {
             if (!ModelState.IsValid)
                 return View("PasswordForgotten", pf);
 
-            // Vérifiez si pf.EMail n'est pas nul ou vide
             if (string.IsNullOrEmpty(pf.EMail))
             {
                 ModelState.AddModelError(string.Empty, "L'email est requis.");
@@ -102,13 +96,23 @@ namespace Campus_Events.Controllers
             }
 
             var user = userRepository.FindByEmail(pf.EMail);
-            if (user is not null)
-                mailService.SendPasswortResetMail(user);
 
-            return View();
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Aucun utilisateur trouvé avec cet e-mail.");
+                return View("PasswordForgotten", pf);
+            }
+
+            // Envoi du mail de réinitialisation du mot de passe
+            mailService.SendPasswortResetMail(pf.EMail); // Passez l'e-mail
+
+            TempData["Message"] = "Un e-mail de réinitialisation du mot de passe a été envoyé, si un compte correspondant existe.";
+            return View("PasswordForgotten", pf);
         }
 
-        [HttpGet("/Account/ResetPassword/{token}")]
+
+
+        [HttpGet("/Authentication/ResetPassword/{token}")]
         public IActionResult ResetPassword([FromRoute] string token)
         {
             var user = userRepository.FindByPasswordResetToken(token);
@@ -118,7 +122,7 @@ namespace Campus_Events.Controllers
             return View(new PasswordResetViewModel() { Token = token });
         }
 
-        [HttpPost("/Account/ResetPassword")]
+        [HttpPost("/Authentication/ResetPassword")]
         public IActionResult ResetPassword([FromForm] PasswordResetViewModel pr)
         {
             if (!ModelState.IsValid)
@@ -127,7 +131,7 @@ namespace Campus_Events.Controllers
             // Vérifiez si pr.Token n'est pas nul ou vide
             if (string.IsNullOrEmpty(pr.Token))
             {
-                ModelState.AddModelError(string.Empty, "Le jeton de réinitialisation est requis.");
+                ModelState.AddModelError(string.Empty, "The reset token is required.");
                 return View("ResetPassword", pr);
             }
 
@@ -138,7 +142,7 @@ namespace Campus_Events.Controllers
             // Vérifiez si pr.Password n'est pas nul ou vide
             if (string.IsNullOrEmpty(pr.Password))
             {
-                ModelState.AddModelError(string.Empty, "Le mot de passe est requis.");
+                ModelState.AddModelError(string.Empty, "Password required.");
                 return View("ResetPassword", pr);
             }
 
@@ -148,23 +152,23 @@ namespace Campus_Events.Controllers
             return Redirect("/");
         }
 
-        [HttpGet("/Account/Register")]
+        [HttpGet("/Authentication/Register")]
         public IActionResult Register()
         {
             return View();
         }
 
-        [HttpPost("/Account/Register")]
+        [HttpPost("/Authentication/Register")]
         public IActionResult Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            // Vérification de l'existence d'un utilisateur avec le même email
+            // Check that a user with the same email address exists
             var existingUser = userRepository.FindByEmail(model.Email);
             if (existingUser != null)
             {
-                ModelState.AddModelError(string.Empty, "Un compte avec cet email existe déjà.");
+                ModelState.AddModelError(string.Empty, "An account with this email already exists.");
                 return View(model);
             }
 
@@ -184,7 +188,7 @@ namespace Campus_Events.Controllers
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-            return Redirect( "/UserDashboard");
+            return Redirect("/Authentication/Login");
         }
     }
     

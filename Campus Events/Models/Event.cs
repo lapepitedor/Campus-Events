@@ -14,10 +14,7 @@ namespace Campus_Events.Models
         public int AvailableSeats => TotalSeats - UserEvents.Count;
         public int TotalSeats { get; set; } // Nombre total de places
         public bool IsActive { get; set; } = true;
-
-
-        // Propriété calculée pour obtenir le nombre d'inscrits
-        public int RegisteredSeats => UserEvents.Count;
+        public int RegisteredSeatsCount { get; set; }
         // Navigation vers UserEvent pour les inscriptions
         public ICollection<UserEvent> UserEvents { get; set; } = new List<UserEvent>();
     }
