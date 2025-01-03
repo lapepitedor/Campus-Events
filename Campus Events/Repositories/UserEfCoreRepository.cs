@@ -96,12 +96,11 @@ namespace Campus_Events.Repositories
         public User Update(User entity)
         {
             // Si l'entité est déjà suivie par le contexte, pas besoin de l'ajouter à nouveau
-            var existingUser = context.Users.Find(entity.ID); // Récupère l'utilisateur existant
+            var existingUser = context.Users.Find(entity.ID); 
             if (existingUser != null)
             {
                 // Mettez à jour les propriétés nécessaires
-                existingUser.PasswordResetToken = entity.PasswordResetToken; // Exemples de propriétés à mettre à jour
-                                                                             // Mettez à jour d'autres propriétés si nécessaire
+                existingUser.PasswordResetToken = entity.PasswordResetToken; 
 
                 context.SaveChanges(); // Enregistrez les modifications
             }

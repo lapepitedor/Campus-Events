@@ -1,7 +1,12 @@
 ﻿@model PagedResult<Campus_Events.Models.Event>
 
+@{
+    ViewData["Title"] = "Subscribed Event";
+    Layout = "_Layout";
+}
+
 <div class="container">
-    <!-- Menu de navigation -->
+  
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Dashboard</a>
@@ -40,7 +45,6 @@
             </div>
         }
 
-        <!-- Affichage des événements dans un tableau -->
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
                 <tr>
@@ -91,5 +95,5 @@
         if (messageElement) {
             messageElement.style.display = "none";
         }
-    }, 5000); // 5000 ms = 5 secondes
+    }, 5000); 
 </script>

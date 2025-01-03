@@ -1,8 +1,10 @@
 ﻿using Campus_Events.Misc;
 using Campus_Events.Persistence;
 using Campus_Events.Repositories;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Connections;
+using System.Reflection;
 
 namespace Campus_Events
 {
@@ -16,9 +18,12 @@ namespace Campus_Events
             services.Configure<MailSettings>(options => config.GetSection("MailSettings").Bind(options));
             services.Configure<DatabaseSettings>(options => config.GetSection("DatabaseSettings").Bind(options));
             services.Configure<GeneralSettings>(options => config.GetSection("GeneralSettings").Bind(options));
-           // services.AddSingleton<IUserRepository, UserMemoryRepository>();
-          //  services.AddSingleton<IEventRepository, EventMemoryRepository>();
-           // services.AddSingleton<IUserRegistration, UserRegistration>();
+            // services.AddSingleton<IUserRepository, UserMemoryRepository>();
+            //  services.AddSingleton<IEventRepository, EventMemoryRepository>();
+            // services.AddSingleton<IUserRegistration, UserRegistration>();
+
+            // Add FluentValidation validators
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly()); 
 
             services.AddSingleton<DbConnectionFactory>();
             services.AddSingleton<PasswordHelper>();

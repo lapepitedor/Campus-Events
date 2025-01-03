@@ -1,7 +1,9 @@
 
 using Campus_Events;
+using System.Reflection;
 
 var builder = new HostBuilder();
+
 builder.UseContentRoot(Directory.GetCurrentDirectory());
 
 // Configure the Generic Host here...
@@ -19,7 +21,10 @@ builder.ConfigureAppConfiguration((hostingContext, config) =>
     config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
     config.AddEnvironmentVariables();
     config.AddCommandLine(args);
+
 });
+
+
 
 builder.ConfigureWebHostDefaults(webBuilder =>
 {

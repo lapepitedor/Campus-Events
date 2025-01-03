@@ -77,8 +77,8 @@ namespace Campus_Events.Controllers
             return Redirect("/Authentication/Login");
         }
 
-        [HttpGet("/Authentication/PasswordForgotten/")]
-        public IActionResult PasswordForgotten()
+        [HttpGet("/Authentication/ForgotPassword/")]
+        public IActionResult ForgottenPassword()
         {
             return View();
         }
@@ -111,6 +111,16 @@ namespace Campus_Events.Controllers
         }
 
 
+        [HttpPost("/Authentication/ForgotPassword")]
+        public IActionResult ForgottenPassword(ForgottenPasswordVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                ModelState.Clear();
+                model.EmailSent = true;
+            }
+            return View(model);
+        }
 
         [HttpGet("/Authentication/ResetPassword/{token}")]
         public IActionResult ResetPassword([FromRoute] string token)
@@ -153,6 +163,7 @@ namespace Campus_Events.Controllers
         }
 
         [HttpGet("/Authentication/Register")]
+
         public IActionResult Register()
         {
             return View();

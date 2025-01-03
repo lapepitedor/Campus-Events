@@ -27,18 +27,24 @@ namespace Campus_Events.Controllers
             return View(events);
         }
 
+        public IActionResult ReturnToDashboard()
+        {
+            return RedirectToAction("UserDashboard");
+        }
+
         public IActionResult RegisteredEvents(Guid userId)
         {
             var registeredEvents = eventRepository.GetEventsForUser(userId); // Récupère les événements inscrits pour cet utilisateur
-                                                                             // return View("UserDashboard", new PagedResult<Event> { Items = registeredEvents.ToList() }); // Utilise la vue UserDashboard pour affichage
+                                                                            
             return View("RegisteredEvents", new PagedResult<Event> { Items = registeredEvents.ToList() });
         }
 
-        // Action pour afficher les détails d'un événement
+        // display event details
         [HttpGet("/User/EventDetails/{id}")]
-        public IActionResult EventDetails(Guid id)
+        public IActionResult EventDetails(Guid id, string returnUrl = null)
         {
             var eventItem = eventRepository.GetSingle(id);
+            ViewData["ReturnUrl"] = returnUrl ?? Url.Action("UserDashboard");
             return View(eventItem);
         }
 
@@ -47,9 +53,8 @@ namespace Campus_Events.Controllers
         {
             bool success = userRegistration.RegisterUserToEvent(eventId, userId);
 
-            TempData["Message"] = success ? "Inscription réussie!" : "Vous êtes déjà inscrit ou il n'y a plus de places disponibles.";
+            TempData["Message"] = success ? "Successful registration!" : "You have already registered or there are no more places available.";
 
-           // return RedirectToAction("EventDetails", new { id = eventId });
             return RedirectToAction("UserDashboard");
         }
 
@@ -58,9 +63,7 @@ namespace Campus_Events.Controllers
         public IActionResult Unregister(Guid eventId, Guid userId)
         {
             bool success = userRegistration.UnregisterUserFromEvent(eventId,userId);
-            TempData["Message"] = success ? "Désinscription réussie!" : "Vous n'êtes pas inscrit à cet événement.";
-
-            //return RedirectToAction("EventDetails", new { id = eventId });
+            TempData["Message"] = success ? "Unsubscription successful!" : "You have not registered for this event.";
             return RedirectToAction("UserDashboard");
         }
 

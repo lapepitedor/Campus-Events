@@ -1,52 +1,69 @@
-﻿@model Campus_Events.Models.Event
+﻿@using Campus_Events.ViewModels
 
-<h2>@(Model.ID == Guid.Empty ? "Create new event" : "Edit event")</h2>
+@model CreateOrEditEventViewModel
+@{
+    ViewData["Title"] = "Event";
+    Layout = "_Layout";
+}
 
-<form asp-action="Save" method="post">
-    <input type="hidden" name="ID" value="@Model.ID">
-    <div class="form-group">
-        <label>Title</label>
-        <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white text-center">
+            <h2 class="mb-0">
+                @(Model.ID == Guid.Empty ? "Create New Event" : "Edit Event")
+            </h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="Save" method="post" class="needs-validation" novalidate>
+                <input type="hidden" name="ID" value="@Model.ID">
+
+                <div class="mb-3">
+                    <label class="form-label">Title</label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Organizer</label>
+                    <input asp-for="Organizer" class="form-control" />
+                    <span asp-validation-for="Organizer" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Type</label>
+                    <select asp-for="Type" asp-items="@(new SelectList(Enum.GetValues(typeof(Campus_Events.Models.EventType))))" class="form-select">
+                    </select>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Date et heure</label>
+                    <input asp-for="Date" type="datetime-local" class="form-control" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Location</label>
+                    <input asp-for="Location" class="form-control" />
+                    <span asp-validation-for="Location" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Max Participant</label>
+                    <input asp-for="TotalSeats" class="form-control" />
+                    <span asp-validation-for="TotalSeats" class="text-danger"></span>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="form-group">
-        <label>Type</label>
-        <select asp-for="Type" asp-items="@(new SelectList(Enum.GetValues(typeof(Campus_Events.Models.EventType))))" class="form-control">
-        </select>
-        <span asp-validation-for="Type" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label>Date et heure</label>
-        <input asp-for="Date" type="datetime-local" class="form-control" />
-        <span asp-validation-for="Date" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label>Location</label>
-        <input asp-for="Location" class="form-control" />
-        <span asp-validation-for="Location" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label>Description</label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label>Status</label>
-        <select asp-for="IsActive" class="form-control">
-            <option value="true">Actif</option>
-            <option value="false">Inactif</option>
-        </select>
-        <span asp-validation-for="IsActive" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label>Max Participant</label>
-        <input asp-for="TotalSeats" class="form-control" />
-        <span asp-validation-for="TotalSeats" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label>Place Dispo</label>
-        <input asp-for="AvailableSeats" class="form-control" />
-        <span asp-validation-for="AvailableSeats" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-</form>
+</div>

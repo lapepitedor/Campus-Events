@@ -1,5 +1,10 @@
 ﻿@model PagedResult<Campus_Events.Models.Event>
 
+@{
+    ViewData["Title"] = "UserDashboard";
+    Layout = "_Layout";
+}
+
 <div class="container ">
     <!-- Menu de navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
@@ -19,7 +24,7 @@
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" asp-action="Logout" asp-controller="Account">
+                        <a class="nav-link" asp-action="Logout" asp-controller="Authentication">
                             <span class="glyphicon glyphicon-log-in"></span> Logout
                         </a>
                     </li>
@@ -28,11 +33,11 @@
         </div>
     </nav>
 
-    <!-- Titre de la section -->
+    <!-- Title of the section -->
     <h2 class="text-center mb-4">@ViewData["Title"]</h2>
 
     <div class="container mt-4">
-    <!-- Vérification et affichage du message d'inscription -->
+        <!-- Check and display registration message -->
     @if (TempData["Message"] != null)
     {
         <div id="tempMessage" class="alert alert-info mt-3">
@@ -40,23 +45,18 @@
         </div>
     }
 
-    <!-- Affichage des événements -->
+        <!-- Event display -->
     <div class="row">
         @foreach (var obj in Model.Items)
         {
             <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">@obj.Title</h5>
-                        <p class="card-subtitle text-muted mb-2">
-                            <i class="fas fa-calendar-alt"></i> @obj.Date.ToString("dd/MM/yyyy HH:mm")
+                            <h5 class="card-title  text-center">@obj.Title</h5>
+                        <p class="card-text mb-2">
+                                <strong>Date:</strong> <i class="fas fa-calendar-alt"></i> @obj.Date.ToString("dd/MM/yyyy HH:mm")
                         </p>
-                        <p class="card-text"><strong>Lieu :</strong> @obj.Location</p>
-                        <p>
-                            <span class="badge @(obj.IsActive ? "bg-success" : "bg-secondary")">
-                                @(obj.IsActive ? "Actif" : "Inactif")
-                            </span>
-                        </p>
+                        <p class="card-text"><strong>Location :</strong> @obj.Location</p>                       
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="text-muted">
                                 <i class="fas fa-users"></i> @obj.RegisteredSeatsCount / @obj.TotalSeats
@@ -74,11 +74,10 @@
 </div>
 
  <script>
-    // Masque le message après 5 secondes (5000 millisecondes)
     setTimeout(function () {
         var messageElement = document.getElementById("tempMessage");
         if (messageElement) {
             messageElement.style.display = "none";
         }
-    }, 2000); // 5000 ms = 5 secondes
+    }, 3000); // 3000 ms = 3 secondes
 </script>           
