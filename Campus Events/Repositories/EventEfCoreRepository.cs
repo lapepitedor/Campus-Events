@@ -33,25 +33,53 @@ namespace Campus_Events.Repositories
 
         public PagedResult<Event> GetAll(EventFilter filter)
         {
-            var query = context.Events.AsQueryable();
+            var query = context.Events.AsNoTracking();
 
-            var totalCount = query.Count();
-            IEnumerable<Event> result;
+            // Appliquer les filtres
+            if (filter.FilterExpressions != null)
+            {
+                foreach (var expression in filter.FilterExpressions)
+                {
+                    if (!string.IsNullOrEmpty(expression.PropertyName) && !string.IsNullOrEmpty(expression.Value))
+                    {
+                        switch (expression.Relation)
+                        {
+                            case RelationType.Equal:
+                                query = query.Where(e => EF.Property<string>(e, expression.PropertyName) == expression.Value);
+                                break;
+                            case RelationType.NotEqual:
+                                query = query.Where(e => EF.Property<string>(e, expression.PropertyName) != expression.Value);
+                                break;
+                            case RelationType.Larger:
+                                query = query.Where(e => EF.Property<DateTime>(e, expression.PropertyName) > DateTime.Parse(expression.Value));
+                                break;
+                            case RelationType.Smaller:
+                                query = query.Where(e => EF.Property<DateTime>(e, expression.PropertyName) < DateTime.Parse(expression.Value));
+                                break;
+                        }
+                    }
+                }
+            }
 
-            if (filter.StartPage >= 0)
-                result = query.AsNoTracking()
-                    .Skip(filter.StartPage * filter.ItemsPerPage)
-                    .Take(filter.ItemsPerPage)
-                    .ToList();
-            else
-                result = query.AsNoTracking().ToList();
+
+            // Validation des paramètres de pagination
+            int startPage = filter.StartPage < 1 ? 1 : filter.StartPage; // Assure que StartPage est toujours >= 1
+            var currentPage = filter.StartPage > 0 ? filter.StartPage : 1;
+
+            // Calculer la pagination
+            int totalCount = query.Count();
+            var items = query
+                .Skip((startPage - 1) * filter.ItemsPerPage)
+                .Take(filter.ItemsPerPage)
+                .ToList();
+
 
             return new PagedResult<Event>
             {
-                TotalItems = totalCount,
-                CurrentPage = filter.StartPage,
-                TotalPages = totalCount / filter.ItemsPerPage + 1,
-                Items = result
+                Items = items,
+                TotalCount = totalCount,
+                PageSize = filter.ItemsPerPage,
+                CurrentPage = currentPage
             };
         }
 

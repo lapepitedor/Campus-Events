@@ -28,16 +28,16 @@ namespace Campus_Events.Repositories
 
             if (eventItem == null || user == null || eventItem.AvailableSeats <= 0)
             {
-                return false; // Événement inexistant ou utilisateur inexistant ou plus de places disponibles
+                return false; // No event or no user or no places available
             }
 
-            // Vérifiez si l'utilisateur est déjà inscrit
+            // Check if the user is already registered
             if (IsUserRegistered(eventId, userId))
             {
-                return false; // L'utilisateur est déjà inscrit à cet événement
+                return false; 
             }
 
-            // Crée une nouvelle inscription
+            // Create a registration
             var userEvent = new UserEvent
             {
                 EventId = eventId,
@@ -50,15 +50,14 @@ namespace Campus_Events.Repositories
 
             try
             {
-                _context.SaveChanges(); // Enregistre les modifications dans la base de données
+                _context.SaveChanges(); 
             }
             catch (DbUpdateException ex)
             {
-                // Gérer les exceptions de mise à jour de base de données
-                return false; // En cas d'erreur, retourner false
+                return false; 
             }
 
-            return true; // Inscription réussie
+            return true; //  Successful registration
         }
 
 
@@ -85,7 +84,7 @@ namespace Campus_Events.Repositories
             }
             catch (DbUpdateException ex)
             {
-                // Handle database exceptions appropriately
+                
                 return false;
             }
 

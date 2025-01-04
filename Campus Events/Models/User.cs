@@ -18,7 +18,9 @@ namespace Campus_Events.Models
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, EMail),
-                new Claim("ID", ID.ToString())
+                new Claim("ID", ID.ToString()),
+                new Claim("FirstName", Firstname ?? string.Empty),
+                new Claim("LastName", Lastname ?? string.Empty)
             };
 
             // Ajoute le rôle d'admin dans les revendications si applicable

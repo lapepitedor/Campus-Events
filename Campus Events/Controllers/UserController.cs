@@ -20,54 +20,102 @@ namespace Campus_Events.Controllers
 
         }
 
-        public IActionResult UserDashboard([FromQuery] Guid userId, EventFilter filter)
+        public IActionResult UserDashboard([FromQuery] int pg = 1)
+
         {
-            var events = eventRepository.GetAll(filter);
-            ViewData["UserId"] = userId; // Passez userId à la vue
-            return View(events);
+            // user infos
+            var firstName = User.Claims.FirstOrDefault(c => c.Type == "FirstName")?.Value;
+            var lastName = User.Claims.FirstOrDefault(c => c.Type == "LastName")?.Value;
+
+            ViewBag.UserFullName = $"{firstName} {lastName}";
+
+            const int pageSize = 9;
+            var filter = new EventFilter
+            {
+                StartPage = pg,
+                ItemsPerPage = pageSize
+            };
+
+            var result = eventRepository.GetAll(filter);
+            return View(result);
         }
+
 
         public IActionResult ReturnToDashboard()
         {
             return RedirectToAction("UserDashboard");
         }
 
-        public IActionResult RegisteredEvents(Guid userId)
+        public IActionResult RegisteredEvents()
         {
-            var registeredEvents = eventRepository.GetEventsForUser(userId); // Récupère les événements inscrits pour cet utilisateur
-                                                                            
-            return View("RegisteredEvents", new PagedResult<Event> { Items = registeredEvents.ToList() });
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "ID")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["Message"] = "Unable to identify the user.";
+                return RedirectToAction("UserDashboard");
+            }
+
+            var registeredEvents = eventRepository.GetEventsForUser(Guid.Parse(userId)).OrderBy(e => e.Date).ToList();
+
+            return View(new PagedResult<Event>
+            {
+                Items = registeredEvents
+            });
         }
 
         // display event details
+
         [HttpGet("/User/EventDetails/{id}")]
-        public IActionResult EventDetails(Guid id, string returnUrl = null)
+        public IActionResult EventDetails(Guid id)
         {
             var eventItem = eventRepository.GetSingle(id);
-            ViewData["ReturnUrl"] = returnUrl ?? Url.Action("UserDashboard");
             return View(eventItem);
         }
 
+
         [HttpPost]
-        public IActionResult Register(Guid eventId, Guid userId)
+        public IActionResult RegisterEvent(Guid eventId)
         {
-            bool success = userRegistration.RegisterUserToEvent(eventId, userId);
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "ID")?.Value;
 
-            TempData["Message"] = success ? "Successful registration!" : "You have already registered or there are no more places available.";
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["Message"] = "Unable to identify the user.";
+                return RedirectToAction("UserDashboard");
+            }
 
-            return RedirectToAction("UserDashboard");
+            bool success = userRegistration.RegisterUserToEvent(eventId, Guid.Parse(userId));
+
+            TempData["Message"] = success
+                ? "Successful registration!"
+                : "You have already registered or there are no more places available.";
+
+            return RedirectToAction("RegisteredEvents");
         }
 
-   
-        [HttpPost]
-        public IActionResult Unregister(Guid eventId, Guid userId)
-        {
-            bool success = userRegistration.UnregisterUserFromEvent(eventId,userId);
-            TempData["Message"] = success ? "Unsubscription successful!" : "You have not registered for this event.";
-            return RedirectToAction("UserDashboard");
-        }
 
-       
+        [HttpPost]
+        public IActionResult UnregisterEvent(Guid eventId)
+        {
+    
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "ID")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["Message"] = "Unable to identify the user.";
+                return RedirectToAction("UserDashboard");
+            }
+
+         
+            bool success = userRegistration.UnregisterUserFromEvent(eventId, Guid.Parse(userId));
+
+            TempData["Message"] = success
+                ? "Unsubscription successful!"
+                : "You have not registered for this event.";
+
+            return RedirectToAction("RegisteredEvents");
+        }
 
     }
 }

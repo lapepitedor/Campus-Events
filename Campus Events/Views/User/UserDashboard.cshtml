@@ -19,7 +19,7 @@
                         <a class="nav-link" asp-action="UserDashboard">Events Available</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-action="RegisteredEvents" asp-route-userId="@User.Claims.FirstOrDefault(x=> x.Type == "ID").Value">List of registered events</a>
+                        <a class="nav-link" asp-action="RegisteredEvents">List of registered events</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
@@ -33,10 +33,8 @@
         </div>
     </nav>
 
-    <!-- Title of the section -->
-    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
-
     <div class="container mt-4">
+
         <!-- Check and display registration message -->
     @if (TempData["Message"] != null)
     {
@@ -44,6 +42,13 @@
             @TempData["Message"]
         </div>
     }
+
+        <div class="welcome-section text-center mb-4">
+            <h2 class="mb-2">🎉 Hello, @ViewBag.UserFullName! 🎉</h2>
+            <p>Welcome to your Campus Events Dashboard!</p>
+            <p>Check out the latest events happening on campus and get involved in the activities you love!</p>
+        </div>
+
 
         <!-- Event display -->
     <div class="row">
@@ -70,14 +75,28 @@
             </div>
         }
     </div>
+
+        <div class="pagination">
+            @if (Model.CurrentPage > 1)
+            {
+                <a asp-action="UserDashboard" asp-route-pg="@(Model.CurrentPage - 1)">Previous</a>
+            }
+            <div style="text-align: center; flex-grow: 1;">
+                Page @Model.CurrentPage of @Model.TotalPages
+            </div>
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <a asp-action="UserDashboard" asp-route-pg="@(Model.CurrentPage + 1)">Next</a>
+            }
+        </div>
 </div>
 </div>
 
- <script>
+@*  <script>
     setTimeout(function () {
         var messageElement = document.getElementById("tempMessage");
         if (messageElement) {
             messageElement.style.display = "none";
         }
-    }, 3000); // 3000 ms = 3 secondes
-</script>           
+    }, 3000); 
+</script>   *@         

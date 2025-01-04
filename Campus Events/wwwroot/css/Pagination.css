@@ -1,0 +1,11 @@
+﻿.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination-center {
+    flex-grow: 1;
+    text-align: center;
+}

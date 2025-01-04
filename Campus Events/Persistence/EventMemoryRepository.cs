@@ -52,23 +52,23 @@ namespace Campus_Events.Persistence
             return input.Skip((filter.StartPage - 1) * filter.ItemsPerPage).Take(filter.ItemsPerPage);
         }
 
-        public PagedResult<Event> GetAll(EventFilter filter)
-        {
-            if (filter is null)
-                filter = new EventFilter();
+        //public PagedResult<Event> GetAll(EventFilter filter)
+        //{
+        //    if (filter is null)
+        //        filter = new EventFilter();
 
-            var objects = Filter(items.Values, filter);
-            var result = new PagedResult<Event>()
-            {
-                CurrentPage = filter.StartPage >= 0 ? filter.StartPage : 0,
-                TotalItems = objects.Count(),
-                TotalPages = (objects.Count() / filter.ItemsPerPage) + 1
-            };
+        //    var objects = Filter(items.Values, filter);
+        //    var result = new PagedResult<Event>()
+        //    {
+        //        CurrentPage = filter.StartPage >= 0 ? filter.StartPage : 0,
+        //        TotalItems = objects.Count(),
+        //        TotalPages = (objects.Count() / filter.ItemsPerPage) + 1
+        //    };
 
-            objects = Order(objects, filter);
-            result.Items = Paginate(objects, filter);
-            return result;
-        }
+        //    objects = Order(objects, filter);
+        //    result.Items = Paginate(objects, filter);
+        //    return result;
+        //}
 
         private bool CompliesFilter(object obj, FilterExpression expression)
         {
@@ -128,5 +128,9 @@ namespace Campus_Events.Persistence
             return items.Values.Where(e => e.UserEvents.Any(ue => ue.UserId == userId));
         }
 
+        public PagedResult<Event> GetAll(EventFilter filter)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

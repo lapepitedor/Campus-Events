@@ -21,11 +21,25 @@ namespace Campus_Events.Controllers
            
         }
 
-        public IActionResult AdminDashboard([FromQuery] EventFilter filter)
+        public IActionResult AdminDashboard([FromQuery] int pg = 1)
         {
-            var events = eventRepository.GetAll(filter);
-           return View(events);
+            const int pageSize = 5;
+            if (pg < 1)
+            {
+                pg = 1;
+            }
+
+            var filter = new EventFilter
+            {
+                StartPage = pg,
+                ItemsPerPage = pageSize
+            };
+
+            var pagedEvents = eventRepository.GetAll(filter);
+
+            return View(pagedEvents);
         }
+
 
         [HttpGet("/Dashboard/Edit/{id}")]
         public IActionResult Edit([FromRoute] Guid id)
@@ -51,17 +65,14 @@ namespace Campus_Events.Controllers
             return View(model);
         }
 
-
-
-
         [HttpGet("/Dashboard/New")]
         public IActionResult New()
         {
-            // Initialisation d'un ViewModel vide pour la création
+           
             var model = new CreateOrEditEventViewModel
             {
-                ID = Guid.Empty, // Indique une création
-                Date = DateTime.Now // Initialiser avec une date par défaut
+                ID = Guid.Empty, 
+                Date = DateTime.Now 
             };
 
             return View("Edit", model);

@@ -4,33 +4,43 @@
     ViewData["Title"] = "Login";
 }
 <div class="account-container">
-    <div class="account-box">
-        <h2 class="text-center mb-4">Login</h2>
+    <div class="account-box shadow-lg p-4 bg-white rounded">
+        <h2 class="text-center mb-4 text-dark">Login</h2>
         <form asp-action="Authenticate" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Email Field -->
             <div class="mb-3">
-                <label asp-for="EMail" class="form-label"></label>
-                <input asp-for="EMail" class="form-control" />
+                <label asp-for="EMail" class="form-label fw-bold">Email</label>
+                <input asp-for="EMail" class="form-control p-2" placeholder="Enter your email" />
                 <span asp-validation-for="EMail" class="text-danger"></span>
             </div>
+
+            <!-- Password Field -->
             <div class="mb-3">
-                <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" class="form-control" />
+                <label asp-for="Password" class="form-label fw-bold">Password</label>
+                <input asp-for="Password" type="password" class="form-control p-2" placeholder="Enter your password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="float-end">
-                <a asp-controller="Authentication" asp-action="ForgottenPassword" class="text-decoration-none">
+
+            <!-- Forgot Password Link -->
+            <div class="text-end mb-3">
+                <a asp-controller="Authentication" asp-action="ForgottenPassword" class="text-decoration-none text-muted">
                     Forgot password?
                 </a>
             </div>
-            
+
+            <!-- Submit Button -->
             <input type="submit" value="Login" class="btn btn-success w-100 p-2" />
-            <p class="text-center mt-2">
-                Don't have an account? <a asp-controller="Authentication" asp-action="Register" class="text-decoration-none">Register</a>
+
+            <!-- Register Link -->
+            <p class="text-center mt-3">
+                Don't have an account?
+                <a asp-controller="Authentication" asp-action="Register" class="text-decoration-none text-primary">
+                    Register
+                </a>
             </p>
-            <div class="text-center">
-                <a asp-controller="Home" asp-action="Index" class="text-decoration-none mt-3">Back</a>
-            </div>
+
         </form>
     </div>
 </div>
