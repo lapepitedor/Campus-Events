@@ -5,7 +5,7 @@ using MailKit.Net.Smtp;
 
 namespace Campus_Events.Misc
 {
-    public class BackgroundEmailSender: BackgroundService
+    public class BackgroundEmailSender : BackgroundService
     {
         private ILogger<BackgroundEmailSender> logger;
         private EmailQueue mailQueue;
@@ -33,24 +33,45 @@ namespace Campus_Events.Misc
             }
         }
 
+        //public void SendEmail(string email, string subject, string messageBody)
+        //{
+        //    var message = new MimeMessage();
+        //    message.From.Add(new MailboxAddress("FromName", "fromAddress@gmail.com"));
+        //    message.To.Add(new MailboxAddress("", email));
+        //    message.Subject = subject;
+        //    message.Body = new TextPart("plain") { Text = messageBody };
+
+        //    using var client = new SmtpClient();
+        //    client.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+        //    client.Authenticate("yourEmail@gmail.com", "yourGeneratedPassword");
+        //    client.Send(message);
+        //    client.Disconnect(true);
+        //}
+
+
         private bool SendMail(MimeMessage message, CancellationToken stoppingToken)
         {
             try
             {
-                using (var client = new SmtpClient())
+                using (var client = new SmtpClient() )
                 {
-                    client.ServerCertificateValidationCallback = (s, c, h, e) => true; // Ignorer la validation du certificat
+                    Console.WriteLine("Connecting to SMTP server...");
 
-                    client.Connect(settings.Host, settings.Port, SecureSocketOptions.Auto, stoppingToken);
-                    //client.Connect(settings.Host, int.Parse(settings.Port), SecureSocketOptions.StartTls, stoppingToken);
+                    client.Connect(settings.Host, settings.Port, SecureSocketOptions.SslOnConnect, stoppingToken);
+                    Console.WriteLine("Connected to SMTP server.");
+
                     client.Authenticate(settings.Username, settings.Password);
+                    Console.WriteLine("Authenticated successfully.");
+
                     client.Send(message);
+                    Console.WriteLine("Email sent successfully to {0}.", message.To.ToString());
+
                     client.Disconnect(true);
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Could not send mail!");
+                logger.LogError(ex, "Could not send mail! Error: {0}", ex.Message);
                 return false;
             }
 

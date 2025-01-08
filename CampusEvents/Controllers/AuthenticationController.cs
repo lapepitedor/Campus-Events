@@ -42,7 +42,6 @@ namespace Campus_Events.Controllers
                 return View("Login", login);
             }
 
-            // Vérifiez si login.Password n'est pas nul ou vide
             if (string.IsNullOrEmpty(login.Password))
             {
                 ModelState.AddModelError(string.Empty, "The password is required.");
@@ -77,11 +76,39 @@ namespace Campus_Events.Controllers
             return Redirect("/Authentication/Login");
         }
 
-        [HttpGet("/Authentication/ForgotPassword/")]
-        public IActionResult ForgottenPassword()
+        [HttpGet("/Authentication/PasswordForgotten/")]
+        public IActionResult PasswordForgotten()
         {
             return View();
         }
+
+        //[HttpPost("/Authentication/SendPasswordResetMail/")]
+        //public IActionResult SendPasswordResetMail([FromForm] PasswordForgottenViewModel pf)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return View("PasswordForgotten", pf);
+
+        //    if (string.IsNullOrEmpty(pf.EMail))
+        //    {
+        //        ModelState.AddModelError(string.Empty, "L'email est requis.");
+        //        return View("PasswordForgotten", pf);
+        //    }
+
+        //    var user = userRepository.FindByEmail(pf.EMail);
+
+        //    if (user == null)
+        //    {
+        //        ModelState.AddModelError(string.Empty, "Aucun utilisateur trouvé avec cet e-mail.");
+        //        return View("PasswordForgotten", pf);
+        //    }
+
+        //    // Envoi du mail de réinitialisation du mot de passe
+        //    mailService.SendPasswortResetMail(pf.EMail); // Passez l'e-mail
+
+        //    TempData["Message"] = "Un e-mail de réinitialisation du mot de passe a été envoyé, si un compte correspondant existe.";
+        //    return View("PasswordForgotten", pf);
+        //}
+
 
         [HttpPost("/Authentication/SendPasswordResetMail/")]
         public IActionResult SendPasswordResetMail([FromForm] PasswordForgottenViewModel pf)
@@ -89,37 +116,11 @@ namespace Campus_Events.Controllers
             if (!ModelState.IsValid)
                 return View("PasswordForgotten", pf);
 
-            if (string.IsNullOrEmpty(pf.EMail))
-            {
-                ModelState.AddModelError(string.Empty, "L'email est requis.");
-                return View("PasswordForgotten", pf);
-            }
-
             var user = userRepository.FindByEmail(pf.EMail);
+            if (user is not null)
+                mailService.SendPasswortResetMail(user);
 
-            if (user == null)
-            {
-                ModelState.AddModelError(string.Empty, "Aucun utilisateur trouvé avec cet e-mail.");
-                return View("PasswordForgotten", pf);
-            }
-
-            // Envoi du mail de réinitialisation du mot de passe
-            mailService.SendPasswortResetMail(pf.EMail); // Passez l'e-mail
-
-            TempData["Message"] = "Un e-mail de réinitialisation du mot de passe a été envoyé, si un compte correspondant existe.";
-            return View("PasswordForgotten", pf);
-        }
-
-
-        [HttpPost("/Authentication/ForgotPassword")]
-        public IActionResult ForgottenPassword(ForgottenPasswordVM model)
-        {
-            if (ModelState.IsValid)
-            {
-                ModelState.Clear();
-                model.EmailSent = true;
-            }
-            return View(model);
+            return View();
         }
 
         [HttpGet("/Authentication/ResetPassword/{token}")]

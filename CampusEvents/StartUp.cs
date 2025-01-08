@@ -3,7 +3,6 @@ using Campus_Events.Persistence;
 using Campus_Events.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Connections;
 using System.Reflection;
 
 namespace Campus_Events
