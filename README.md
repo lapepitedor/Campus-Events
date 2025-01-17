@@ -98,6 +98,6 @@ GET /User/RegisteredEvents : List of events the user has registered for.
 
 **Pagination:** Implemented for dashboards
 
-**Author**
+## Author
 
 Developed by Messu Brinda Aurelie and as part of the Backend Development course by Professor Alexander Stuckenholz. For questions or suggestions, feel free to contact me.
