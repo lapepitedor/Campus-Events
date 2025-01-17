@@ -35,7 +35,6 @@ namespace Campus_Events.Repositories
         {
             var query = context.Events.AsNoTracking();
 
-            // Appliquer les filtres
             if (filter.FilterExpressions != null)
             {
                 foreach (var expression in filter.FilterExpressions)
@@ -62,11 +61,11 @@ namespace Campus_Events.Repositories
             }
 
 
-            // Validation des paramètres de pagination
-            int startPage = filter.StartPage < 1 ? 1 : filter.StartPage; // Assure que StartPage est toujours >= 1
+            // Pagination parameter validation
+            int startPage = filter.StartPage < 1 ? 1 : filter.StartPage; // Ensures that StartPage is always >= 1
             var currentPage = filter.StartPage > 0 ? filter.StartPage : 1;
 
-            // Calculer la pagination
+            // Calculate the pagination
             int totalCount = query.Count();
             var items = query
                 .Skip((startPage - 1) * filter.ItemsPerPage)

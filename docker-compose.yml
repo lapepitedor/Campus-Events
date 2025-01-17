@@ -1,3 +1,38 @@
+# version: '3.8'
+
+# services:
+#   campusevents:
+#     image: campusevents
+#     build:
+#       context: .
+#       dockerfile: CampusEvents/Dockerfile
+#     depends_on:
+#       - postgres-db
+#     environment:
+#       - ASPNETCORE_ENVIRONMENT=Development
+#       - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/Campus-Events.pfx
+#       - ASPNETCORE_Kestrel__Certificates__Default__Password=QQ2024docker
+#       - ConnectionStrings__DefaultConnection=Host=postgres-db;Port=5432;Database=CampusEventsManager;Username=postgres;Password=secret
+
+#   postgres-db:
+#     image: postgres:16.4
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: secret
+#       POSTGRES_DB: CampusEventsManager
+#     ports:
+#       - "8081:5432"
+
+#     volumes:
+#       - db-data:/var/lib/postgresql/data
+
+# volumes:
+#   db-data: 
+
+# networks:
+#   default:
+#     name: dockercompose16039205016906870231_default"
+
 version: '3.8'
 
 services:
@@ -9,10 +44,12 @@ services:
     depends_on:
       - postgres-db
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/Campus-Events.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=QQ2024docker
       - ConnectionStrings__DefaultConnection=Host=postgres-db;Port=5432;Database=CampusEventsManager;Username=postgres;Password=secret
+    networks:
+      - app-network
 
   postgres-db:
     image: postgres:16.4
@@ -21,14 +58,16 @@ services:
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: CampusEventsManager
     ports:
-      - "5432:5432"
-
+      - "8081:5432"
+      - "8080:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
 
 volumes:
-  db-data: 
+  db-data:
 
 networks:
-  default:
-    name: dockercompose16039205016906870231_default"
+  app-network:
+    name: app-network

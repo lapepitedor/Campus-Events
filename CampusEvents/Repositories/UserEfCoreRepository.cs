@@ -21,9 +21,9 @@ namespace Campus_Events.Repositories
             {
                 var user = new User()
                 {
-                    Firstname = "Alexander",
-                    Lastname = "Stuckenholz",
-                    EMail = "alexander.stuckenholz@hshl.de",
+                    Firstname = "Jack",
+                    Lastname = "Bauer",
+                    EMail = "Jack.bauer@hshl.de",
                     PasswordHash = passwordHelper.ComputeSha256Hash("secret"),
                     IsAdmin = true
                 };

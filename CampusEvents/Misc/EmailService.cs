@@ -29,38 +29,21 @@ namespace Campus_Events.Misc
             message.Subject = "CampusEvent - Reset Password";
             message.Body = new TextPart("plain")
             {
-                Text = $"Reset passwort: http://localhost:5162/Authentication/ResetPassword/{user.PasswordResetToken}"
+                Text = $"Reset passwort: http://localhost:5136/Authentication/ResetPassword/{user.PasswordResetToken}"
             };
             emailQueue.Enqueue(message);
-        }
-
-        //public void SendPasswortResetMail(string email) // Changer pour accepter l'email
-        //{
-        //    var user = userRepository.FindByEmail(email);
-        //    if (user == null)
-        //    {
-        //        logger.LogWarning("No users found with this email : {Email}", email);
-        //        return; 
-        //    }
-
-        //    user.PasswordResetToken = passwordHelper.GenerateToken();
-
-        //    userRepository.Update(user);
-
-        //    var message = new MimeMessage();
-        //    message.To.Add(new MailboxAddress("", user.EMail));
-        //    message.Subject = "CampusEvent - Reset Password";
-        //    message.Body = new TextPart("plain")
-        //    {
-        //        Text = $"Reset passwort: http://localhost:5162/Authentication/ResetPassword/{user.PasswordResetToken}"
-        //    };
-        //    emailQueue.Enqueue(message);
-        //}
-
-
+        }      
         public void SendRegistrationMail(User user)
         {
-
+            var message = new MimeMessage();
+            message.To.Add(new MailboxAddress("", user.EMail));
+            message.Subject = "CampusEvent - Welcome";
+            message.Body = new TextPart("plain")
+            {
+                Text = $"Welcome to CampusEvent,{user.Firstname} {user.Lastname}!\n\n" +
+               $"Thank you for registering. You can now access our platform to manage your events and participations." 
+            };
+            emailQueue.Enqueue(message);
         }
     }
 }

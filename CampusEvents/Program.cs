@@ -19,6 +19,11 @@ builder.ConfigureAppConfiguration((hostingContext, config) =>
     var env = hostingContext.HostingEnvironment;
     config.AddJsonFile("appsettings.json", optional: false);
     config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+   
+    if (env.EnvironmentName == "Docker")
+    {
+        config.AddJsonFile("appsettings.Docker.json", optional: true, reloadOnChange: true);
+    }
     config.AddEnvironmentVariables();
     config.AddCommandLine(args);
 

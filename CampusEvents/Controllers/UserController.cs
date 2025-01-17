@@ -106,8 +106,7 @@ namespace Campus_Events.Controllers
                 TempData["Message"] = "Unable to identify the user.";
                 return RedirectToAction("UserDashboard");
             }
-
-         
+        
             bool success = userRegistration.UnregisterUserFromEvent(eventId, Guid.Parse(userId));
 
             TempData["Message"] = success

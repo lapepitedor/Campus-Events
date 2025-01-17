@@ -82,34 +82,6 @@ namespace Campus_Events.Controllers
             return View();
         }
 
-        //[HttpPost("/Authentication/SendPasswordResetMail/")]
-        //public IActionResult SendPasswordResetMail([FromForm] PasswordForgottenViewModel pf)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return View("PasswordForgotten", pf);
-
-        //    if (string.IsNullOrEmpty(pf.EMail))
-        //    {
-        //        ModelState.AddModelError(string.Empty, "L'email est requis.");
-        //        return View("PasswordForgotten", pf);
-        //    }
-
-        //    var user = userRepository.FindByEmail(pf.EMail);
-
-        //    if (user == null)
-        //    {
-        //        ModelState.AddModelError(string.Empty, "Aucun utilisateur trouvé avec cet e-mail.");
-        //        return View("PasswordForgotten", pf);
-        //    }
-
-        //    // Envoi du mail de réinitialisation du mot de passe
-        //    mailService.SendPasswortResetMail(pf.EMail); // Passez l'e-mail
-
-        //    TempData["Message"] = "Un e-mail de réinitialisation du mot de passe a été envoyé, si un compte correspondant existe.";
-        //    return View("PasswordForgotten", pf);
-        //}
-
-
         [HttpPost("/Authentication/SendPasswordResetMail/")]
         public IActionResult SendPasswordResetMail([FromForm] PasswordForgottenViewModel pf)
         {
@@ -139,7 +111,6 @@ namespace Campus_Events.Controllers
             if (!ModelState.IsValid)
                 return View("ResetPassword", pr);
 
-            // Vérifiez si pr.Token n'est pas nul ou vide
             if (string.IsNullOrEmpty(pr.Token))
             {
                 ModelState.AddModelError(string.Empty, "The reset token is required.");
@@ -150,7 +121,6 @@ namespace Campus_Events.Controllers
             if (user is null)
                 return View("ResetPassword", pr);
 
-            // Vérifiez si pr.Password n'est pas nul ou vide
             if (string.IsNullOrEmpty(pr.Password))
             {
                 ModelState.AddModelError(string.Empty, "Password required.");
@@ -184,7 +154,7 @@ namespace Campus_Events.Controllers
                 return View(model);
             }
 
-            // Création de l'utilisateur
+            // Create new user 
             var user = new User
             {
                 Firstname = model.Firstname,
@@ -194,8 +164,8 @@ namespace Campus_Events.Controllers
             };
 
             userRepository.Add(user);
+            mailService.SendRegistrationMail(user);
 
-            // Connexion après inscription
             var claims = user.ToClaims();
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
